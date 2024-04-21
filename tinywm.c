@@ -55,6 +55,8 @@ int main(void)
 		{
 			XGetWindowAttributes(dpy, ev.xbutton.subwindow, &attr);
 			start = ev.xbutton;
+			XRaiseWindow(dpy,ev.xbutton.subwindow);
+			XSetInputFocus(dpy, ev.xbutton.subwindow, RevertToParent, CurrentTime);
 		}
 		else if(ev.type == MotionNotify && start.subwindow != None)
 		{

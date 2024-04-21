@@ -92,7 +92,32 @@ int setCurrentWindow(int state, Display *dpy) {
 	return 0;
 }
 
+void simple(Display *dpy) {
+	Window root_return;
+	Window parent_return;
+	Window* children_return;
+	unsigned int nchildren_return;
+	int x_return, y_return;
+	unsigned int width_return, height_return;
+	unsigned int border_width_return;
+	unsigned int depth_return;
+
+	XQueryTree( dpy,DefaultRootWindow(dpy), &root_return, &parent_return, &children_return, &nchildren_return);
+
+	for(int i = 0; i < nchildren_return; i++) {
+		XGetGeometry(dpy, children_return[i], &root_return, &x_return, &y_return, &width_return, &height_return, &border_width_return, &depth_return);
+		if(width_return>500 && height_return > 500){
+			Window cur = children_return[i];
+			XRaiseWindow(dpy,cur);
+			XSetInputFocus(dpy, cur, RevertToParent, CurrentTime);
+			return;
+		}
+	}
+}
+
 void altTab(Display *dpy) {
+	simple(dpy);
+	return;
 	updateCurAndPreviousWindow(dpy);
 	if(0 == cur) return;
 	XRaiseWindow(dpy,cur);

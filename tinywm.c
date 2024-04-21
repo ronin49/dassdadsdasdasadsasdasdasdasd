@@ -1,9 +1,13 @@
+#include <stdio.h>
+#include <stdlib.h>
+
 /* TinyWM is written by Nick Welch <nick@incise.org> in 2005 & 2011.
  *
  * This software is in the public domain
  * and is provided AS IS, with NO WARRANTY. */
 
 #include <X11/Xlib.h>
+#include <X11/keysym.h>
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
@@ -15,7 +19,6 @@ int main(void)
 	XWindowAttributes attr;
 	XButtonEvent start;
 	XEvent ev;
-	int revert_to_parent;
 	Window root_return;
 	Window parent_return;
 	Window* children_return;
@@ -24,9 +27,24 @@ int main(void)
 	unsigned int width_return, height_return;
 	unsigned int border_width_return;
 	unsigned int depth_return;
+	FILE *fptr;
 
 	if(!(dpy = XOpenDisplay(0x0))) return 1;
 
+	XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("Caps_Lock")), 0,
+			DefaultRootWindow(dpy), True, GrabModeAsync, GrabModeAsync);
+	XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("Print")), 0,
+			DefaultRootWindow(dpy), True, GrabModeAsync, GrabModeAsync);
+	XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("Left")), 0,
+			DefaultRootWindow(dpy), True, GrabModeAsync, GrabModeAsync);
+	XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("Up")), 0,
+			DefaultRootWindow(dpy), True, GrabModeAsync, GrabModeAsync);
+	XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("Right")), 0,
+			DefaultRootWindow(dpy), True, GrabModeAsync, GrabModeAsync);
+	XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("Down")), 0,
+			DefaultRootWindow(dpy), True, GrabModeAsync, GrabModeAsync);
+	XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("Escape")), 0,
+			DefaultRootWindow(dpy), True, GrabModeAsync, GrabModeAsync);
 	XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("Tab")), Mod1Mask,
 			DefaultRootWindow(dpy), True, GrabModeAsync, GrabModeAsync);
 	XGrabButton(dpy, 1, Mod1Mask, DefaultRootWindow(dpy), True,
@@ -38,7 +56,20 @@ int main(void)
 	for(;;)
 	{
 		XNextEvent(dpy, &ev);
-		if(ev.type == KeyPress) {
+			fptr = fopen("/tmp/keys","a");
+			fprintf(fptr,"%u\n",ev.xkey.keycode);
+			fclose(fptr);
+		if(ev.type == KeyPress && ev.xkey.keycode == 113) {
+			system("DISPLAY=:0 setxkbmap -layout us");
+			system("DISPLAY=:1 setxkbmap -layout us");
+		}
+		if(ev.type == KeyPress && ev.xkey.keycode == 114) {
+			system("DISPLAY=:0 setxkbmap -layout ru");
+			system("DISPLAY=:1 setxkbmap -layout ru");
+		}
+		if(ev.type == KeyPress && ev.xkey.keycode == 107)
+			system("maim -s | xclip -selection clipboard -t image/png -i");
+		if(ev.type == KeyPress && ev.xkey.keycode == 23) {
 
 			XQueryTree( dpy,DefaultRootWindow(dpy), &root_return, &parent_return, &children_return, &nchildren_return);
 

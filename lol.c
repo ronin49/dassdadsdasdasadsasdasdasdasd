@@ -4,7 +4,6 @@
 #include <string.h>
 #include <time.h>
 
-Display * dpy = 0;
 Window prev = 0;
 Window cur = 0;
 enum states {
@@ -13,17 +12,27 @@ enum states {
 	SET_CUR_TO_ANY_BUT_NOT_CUR_AND_NOT_PREV
 };
 unsigned prevClick = 0;
-int setCurrentWindow(int state);
+int setCurrentWindow(int state, Display *dpy);
 int doubleClick();
 
-void updateCurAndPreviousWindow() {
+void checkIfWindowClosed(Window *w) {
+
+}
+
+void checkIfCurAndPrevWindowsClosed() {
+if(cur) checkIfWindowClosed(&cur);
+if(prev) checkIfWindowClosed(&prev);
+}
+
+void updateCurAndPreviousWindow(Display *dpy) {
+	checkIfCurAndPrevWindowsClosed();
 	if(0 == cur) {
-		setCurrentWindow(SET_CUR_TO_ANY);
+		setCurrentWindow(SET_CUR_TO_ANY, dpy);
 		return;
 	}
 	if(0 == prev) {
 		prev = cur;
-		if(0==setCurrentWindow(SET_CUR_TO_ANY_BUT_NOT_CUR))
+		if(0==setCurrentWindow(SET_CUR_TO_ANY_BUT_NOT_CUR,dpy))
 			prev = 0;
 		return;
 	}
@@ -33,14 +42,14 @@ void updateCurAndPreviousWindow() {
 		prev = tmp;
 		return;
 	}
-	if(0==setCurrentWindow(SET_CUR_TO_ANY_BUT_NOT_CUR_AND_NOT_PREV)){
+	if(0==setCurrentWindow(SET_CUR_TO_ANY_BUT_NOT_CUR_AND_NOT_PREV,dpy)){
 		int tmp = cur;
 		cur = prev;
 		prev = tmp;
 	}
 }
 
-int setCurrentWindow(int state) {
+int setCurrentWindow(int state, Display *dpy) {
 	Window root_return;
 	Window parent_return;
 	Window* children_return;
@@ -83,11 +92,20 @@ int setCurrentWindow(int state) {
 	return 0;
 }
 
-int main(int argc,char *argv[]) {
+void altTab(Display *dpy) {
+	updateCurAndPreviousWindow(dpy);
+	if(0 == cur) return;
+	XRaiseWindow(dpy,cur);
+	XSetInputFocus(dpy, cur, RevertToParent, CurrentTime);
+}
+
+int interactive(int argc,char *argv[]) {
+Display *dpy;
 l:
 	if(!(dpy = XOpenDisplay(0x0))) return 1;
-	updateCurAndPreviousWindow();
+	updateCurAndPreviousWindow(dpy);
 	XRaiseWindow(dpy,cur);
+	XSetInputFocus(dpy, cur, RevertToParent, CurrentTime);
 	XCloseDisplay(dpy);
 	int i;scanf("%d",&i); goto l;
 

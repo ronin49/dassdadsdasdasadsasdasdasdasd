@@ -7,6 +7,8 @@
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
+extern void altTab(Display *dpy);
+
 int main(void)
 {
     Display * dpy;
@@ -29,7 +31,8 @@ int main(void)
     for(;;)
     {
         XNextEvent(dpy, &ev);
-        if(ev.type == KeyPress && ev.xkey.subwindow != None) {
+        if(ev.type == KeyPress) {
+		altTab(dpy);
 		// xorg make topmost window topleast
 //XGetInputFocus( dpy, &topmost, &revert_to_parent);
   //          XLowerWindow(dpy, topmost);

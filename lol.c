@@ -13,7 +13,7 @@ enum states {
 	SET_CUR_TO_ANY_BUT_NOT_CUR_AND_NOT_PREV
 };
 unsigned prevClick = 0;
-void setCurrentWindow(int state);
+int setCurrentWindow(int state);
 int doubleClick();
 
 void updateCurAndPreviousWindow() {
@@ -23,7 +23,8 @@ void updateCurAndPreviousWindow() {
 	}
 	if(0 == prev) {
 		prev = cur;
-		setCurrentWindow(SET_CUR_TO_ANY_BUT_NOT_CUR);
+		if(0==setCurrentWindow(SET_CUR_TO_ANY_BUT_NOT_CUR))
+			prev = 0;
 		return;
 	}
 	if(0 == doubleClick()) {
@@ -32,10 +33,14 @@ void updateCurAndPreviousWindow() {
 		prev = tmp;
 		return;
 	}
-	setCurrentWindow(SET_CUR_TO_ANY_BUT_NOT_CUR_AND_NOT_PREV);
+	if(0==setCurrentWindow(SET_CUR_TO_ANY_BUT_NOT_CUR_AND_NOT_PREV)){
+		int tmp = cur;
+		cur = prev;
+		prev = tmp;
+	}
 }
 
-void setCurrentWindow(int state) {
+int setCurrentWindow(int state) {
 	Window root_return;
 	Window parent_return;
 	Window* children_return;
@@ -57,24 +62,25 @@ void setCurrentWindow(int state) {
 			printf("%s %ld %d %d\n",name, children_return[i], width_return, height_return);
 			if(state==SET_CUR_TO_ANY) {
 				cur = children_return[i];
-				return;
+				return 1;
 			}
 			if(state==SET_CUR_TO_ANY_BUT_NOT_CUR) {
 				if(children_return[i] != cur) {
 					cur = children_return[i];
-					return;
+					return 1;
 				}
 			}
 			if(state==SET_CUR_TO_ANY_BUT_NOT_CUR_AND_NOT_PREV) {
 				if(children_return[i] != cur &&
 						children_return[i] != prev) {
 					cur = children_return[i];
-					return;
+					return 1;
 				}
 			}
 					
 		}
 	}
+	return 0;
 }
 
 int main(int argc,char *argv[]) {
@@ -92,7 +98,7 @@ int doubleClick() {
 		prevClick = time(0);
 		return 0;
 	}
-	if(2 > time(0)-prevClick) {
+	if(1 > time(0)-prevClick) {
 		prevClick = time(0);
 		return 1;
 	}

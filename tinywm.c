@@ -67,7 +67,6 @@ int main(void)
 			system("maim -s | xclip -selection clipboard -t image/png -i");
 		if(ev.type == KeyPress && ev.xkey.keycode == 23) {
 			XQueryTree( dpy,DefaultRootWindow(dpy), &root_return, &parent_return, &children_return, &nchildren_return);
-
 			for(int i = 0; i < nchildren_return; i++) {
 				XGetGeometry(dpy, children_return[i], &root_return, &x_return, &y_return, &width_return, &height_return, &border_width_return, &depth_return);
 				if(width_return>500 && height_return > 500){

@@ -29,6 +29,7 @@ int main(void)
 	unsigned int depth_return;
 #ifdef DEBUG
 	FILE *fptr;
+	char *name;
 #endif
 
 	if(!(dpy = XOpenDisplay(0x0))) return 1;
@@ -52,16 +53,14 @@ int main(void)
 		XNextEvent(dpy, &ev);
 #ifdef DEBUG
 		fptr = fopen("/tmp/keys","a");
-		fprintf(fptr,"%u\n",ev.xkey.keycode);
+		fprintf(fptr,"key: %u\n",ev.xkey.keycode);
 		fclose(fptr);
 #endif
 		if(ev.type == KeyPress && ev.xkey.keycode == 67) {
 			system("DISPLAY=:0 setxkbmap -layout us");
-			system("DISPLAY=:1 setxkbmap -layout us");
 		}
 		if(ev.type == KeyPress && ev.xkey.keycode == 68) {
 			system("DISPLAY=:0 setxkbmap -layout ru");
-			system("DISPLAY=:1 setxkbmap -layout ru");
 		}
 		if(ev.type == KeyPress && ev.xkey.keycode == 107)
 			system("maim -s | xclip -selection clipboard -t image/png -i");
@@ -72,6 +71,13 @@ int main(void)
 				if(width_return>500 && height_return > 500){
 					XRaiseWindow(dpy,children_return[i]);
 					XSetInputFocus(dpy, children_return[i], RevertToParent, CurrentTime);
+					system("DISPLAY=:0 setxkbmap -layout us");
+#ifdef DEBUG
+					XFetchName(dpy,children_return[i],&name);
+					fptr = fopen("/tmp/keys","a");
+					fprintf(fptr,"window: '%s'\n",name);
+					fclose(fptr);
+#endif
 					break;
 				}
 			}

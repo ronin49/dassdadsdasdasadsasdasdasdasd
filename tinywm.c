@@ -40,11 +40,8 @@ int main(void)
 			DefaultRootWindow(dpy), True, GrabModeAsync, GrabModeAsync);
 	XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("Print")), 0,
 			DefaultRootWindow(dpy), True, GrabModeAsync, GrabModeAsync);
-	XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("0")), Mod4Mask,
+	XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("Tab")), Mod4Mask,
 			DefaultRootWindow(dpy), True, GrabModeAsync, GrabModeAsync);
-	// 23 keycode
-	//XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("Tab")), Mod4Mask,
-			//DefaultRootWindow(dpy), True, GrabModeAsync, GrabModeAsync);
 	XGrabButton(dpy, 1, Mod4Mask, DefaultRootWindow(dpy), True,
 			ButtonPressMask|ButtonReleaseMask|PointerMotionMask, GrabModeAsync, GrabModeAsync, None, None);
 	XGrabButton(dpy, 3, Mod4Mask, DefaultRootWindow(dpy), True,
@@ -67,7 +64,7 @@ int main(void)
 		}
 		if(ev.type == KeyPress && ev.xkey.keycode == 107)
 			system("maim -s | xclip -selection clipboard -t image/png -i");
-		if(ev.type == KeyPress && ev.xkey.keycode == 19) {
+		if(ev.type == KeyPress && ev.xkey.keycode == 23) {
 			XQueryTree( dpy,DefaultRootWindow(dpy), &root_return, &parent_return, &children_return, &nchildren_return);
 			for(int i = 0; i < nchildren_return; i++) {
 				XGetGeometry(dpy, children_return[i], &root_return, &x_return, &y_return, &width_return, &height_return, &border_width_return, &depth_return);

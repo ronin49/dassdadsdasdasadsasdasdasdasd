@@ -24,7 +24,7 @@ main (void)
 			DefaultRootWindow (dpy), False, GrabModeAsync, GrabModeAsync);
 	XGrabKey (dpy, XKeysymToKeycode (dpy, XStringToKeysym ("1")), ControlMask,
 			DefaultRootWindow (dpy), False, GrabModeAsync, GrabModeAsync);
-	XGrabKey (dpy, XKeysymToKeycode (dpy, XStringToKeysym ("d")), ControlMask,
+	XGrabKey (dpy, XKeysymToKeycode (dpy, XStringToKeysym ("g")), ControlMask,
 			DefaultRootWindow (dpy), False, GrabModeAsync, GrabModeAsync);
 
 	XSelectInput (dpy, DefaultRootWindow (dpy), SubstructureRedirectMask); // to receive MapRequest
@@ -48,9 +48,9 @@ main (void)
 					CurrentTime);
 		}
 		if (ev.type == KeyPress) {
-			FILE *f = fopen("/keys","a");
-			fprintf(f,"Key pressed: %s\n", XKeysymToString(XLookupKeysym(&ev.xkey,0)));
-			fclose(f);
+	FILE *f = fopen("/keys","a");
+	fprintf(f,"Key pressed: %s\n", XKeysymToString(XLookupKeysym(&ev.xkey,0)));
+	fclose(f);
                 }
 		if(ev.type == KeyPress && XLookupKeysym(&ev.xkey,0) == XStringToKeysym("1"))
 		{
@@ -60,7 +60,7 @@ main (void)
 		{
 			system ("2>/dev/null maim -s | xclip -selection clipboard -t image/png -i");
 		}
-		if (ev.type == KeyPress && XLookupKeysym(&ev.xkey,0) == XStringToKeysym("d"))
+		if (ev.type == KeyPress && XLookupKeysym(&ev.xkey,0) == XStringToKeysym("g"))
 		{
 switch_window:
 			XQueryTree (dpy, DefaultRootWindow (dpy), &root_return,
